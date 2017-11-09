@@ -7,6 +7,7 @@
 #include <QFileDialog>
 #include <QDebug>
 #include <QTextStream>
+#include <QVector>
 
 
 Sniffer::Sniffer(QWidget *parent) :
@@ -87,6 +88,7 @@ void Sniffer::on_open_clicked()
     writeStream <<"thiszone\t"<< ps.fHeader.thiszone<<endl;
     writeStream <<"major\t"<< ps.fHeader.version_major<<endl;
     writeStream <<"minor\t"<< ps.fHeader.version_minor<<endl;
+    writeStream <<"magic\t"<< ps.fHeader.magic<<endl;
 
     int min=65535;
     int max=0;
@@ -96,9 +98,12 @@ void Sniffer::on_open_clicked()
      allpackets++;
      file.read((char*)&pk.pHeader,16);
 
+
      writeStream << "packets # "<<allpackets<<endl;
      writeStream << "t1\t"<<pk.pHeader.t1<<endl;
+
      writeStream<< "t2\t"<< pk.pHeader.t2<<endl;
+
      writeStream <<"packet : bytes\n"<<pk.pHeader.len<<endl;
      writeStream <<"packet : bytes\n"<<pk.pHeader.caplen<<endl;
      writeStream <<"\n\n";
