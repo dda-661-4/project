@@ -81,29 +81,49 @@ void Sniffer::on_open_clicked()
   if(fileOut.open(QIODevice::WriteOnly | QIODevice::Text))
   {
     QTextStream writeStream(&fileOut);
-    writeStream << ps.fHeader.linktype<<endl;
-    writeStream << ps.fHeader.snaplen<<endl;
-    writeStream << ps.fHeader.sigfigs<<endl;
-    writeStream << ps.fHeader.thiszone<<endl;
-    writeStream << ps.fHeader.version_major<<endl;
-    writeStream << ps.fHeader.version_minor<<endl;
+    writeStream <<"linktype\t"<< ps.fHeader.linktype<<endl;
+    writeStream <<"max lenth bytes\t"<< ps.fHeader.snaplen<<endl;
+    writeStream <<"sigfigs\t"<< ps.fHeader.sigfigs<<endl;
+    writeStream <<"thiszone\t"<< ps.fHeader.thiszone<<endl;
+    writeStream <<"major\t"<< ps.fHeader.version_major<<endl;
+    writeStream <<"minor\t"<< ps.fHeader.version_minor<<endl;
+
+    int min=65535;
+    int max=0;
 
     while(file.pos()<p)
    {
      allpackets++;
      file.read((char*)&pk.pHeader,16);
 
-     writeStream << allpackets<<endl;
-     writeStream <<"len bytes"<<pk.pHeader.len<<endl;
-     writeStream << "caplen bytes"<<pk.pHeader.caplen<<endl;
+     writeStream << "packets # "<<allpackets<<endl;
+     writeStream << "t1\t"<<pk.pHeader.t1<<endl;
+     writeStream<< "t2\t"<< pk.pHeader.t2<<endl;
+     writeStream <<"packet : bytes\n"<<pk.pHeader.len<<endl;
+     writeStream <<"packet : bytes\n"<<pk.pHeader.caplen<<endl;
+     writeStream <<"\n\n";
+
+     if(pk.pHeader.caplen>max)
+     {
+         max=pk.pHeader.caplen;
+     }
+     if(pk.pHeader.caplen<min)
+     {
+         min=pk.pHeader.caplen;
+     }
+
      file.seek(file.pos()+pk.pHeader.len);
    }
+     ui->min->setText(QString::number(min));
+     ui->max->setText(QString::number(max));
     QFile File("/home/dribl/d.txt");
     if((File.exists())&&(File.open(QIODevice::ReadOnly)))
-       {
+     {
        ui->textBrowser->setText(File.readAll());
-       }
+     }
   }
+
+  file.close();
  }
 
   qDebug() << ps.fHeader.linktype;
