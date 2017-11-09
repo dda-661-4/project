@@ -10,57 +10,40 @@ namespace Ui {
 class Sniffer;
 }
 
-struct PcapHeader
+struct pkt
 {
-    qint32 t1;
-    qint32 t2;
-    qint32 caplen;
-    qint32 len;
-
+        qint32 t1;
+        qint32 t2;
+        qint32 caplen;
+        qint32 len;
 };
 
-class Packet
+class header
 {
 public:
+  pkt pHeader;
+  //header();
+  unsigned char data[2000];
+  //~header();
 
-    Packet();
-    Packet(const Packet &p); //прототип конструктор копирования
-    void operator=(const Packet &p);// оператор присваивания
-    // функция (селектор)
-
-    char* getPcapHeader()
-    {
-        return (char*) &pHeader;
-    };
-    char* getData()
-    {
-        return (char*)m_data;
-    };
-
-    ~Packet();
-    virtual void show();
-
- private:
-    PcapHeader pHeader; // m -member
-    unsigned char *m_data;
 };
 
-struct PcaFHeader
+struct pcapHeader
 {
     qint32 magic;
     qint16 version_major;
     qint16 version_minor;
-    qint32 thiszone;
-    qint32 sigfigs;
-    qint32 snaplen;
-    qint32 linktype;
+    qint32 thiszone;     /* gmt to local correction */
+    qint32 sigfigs;    /* accuracy of timestamps */
+    qint32 snaplen;    /* max length saved portion of each pkt */
+    qint32 linktype;   /* data link type (LINKTYPE_*) */
 };
 
 class PacketStream
 {
- public:
-    PcaFHeader fHeader;
-    QVector <Packet> packets;
+public:
+    pcapHeader fHeader;
+    //QVector <header> packets;
 };
 
 
@@ -78,6 +61,10 @@ private slots:
     void on_actionExit_triggered();
 
     void on_ok_clicked();
+
+    void on_open_clicked();
+
+    void on_pushButton_2_clicked();
 
 private:
     Ui::Sniffer *ui;

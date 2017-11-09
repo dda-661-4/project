@@ -93,8 +93,13 @@ void MainWindow::on_pushButton_13_clicked()
        }
     if(devide==true)
        {
+         if(b!=0)
+         {
        c=a/b;
        ui->lineEdit->setText(QString::number(c));
+         }
+        else
+       ui->lineEdit->setText("Division is denied");
        }
      plus = false;
      minus = false;
