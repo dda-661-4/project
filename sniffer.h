@@ -43,7 +43,7 @@ class PacketStream
 {
 public:
     pcapHeader fHeader;
-    //QVector <header> packets;
+    QVector <header> packets;
 };
 
 

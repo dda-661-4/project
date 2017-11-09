@@ -6,6 +6,7 @@
 #include <pcap.h>
 #include <QFileDialog>
 #include <QDebug>
+#include <QTextStream>
 
 
 Sniffer::Sniffer(QWidget *parent) :
@@ -48,10 +49,7 @@ Sniffer::~Sniffer()
     delete ui;
 }
 
-
 int z;
-int o=0;
-
 
 void Sniffer::on_actionExit_triggered()
 {
@@ -67,6 +65,7 @@ void Sniffer::on_open_clicked()
 {
   QString fName = QFileDialog::getOpenFileName(this,"open the file");
   QFile file(fName);
+  QFile fileOut("/home/dribl/d.txt");
   PacketStream ps;
   header pk;
 
@@ -74,34 +73,47 @@ void Sniffer::on_open_clicked()
       {
               qDebug() << "error open file";
       }
-  else {
+  else
+  {
   file.read((char *)&ps.fHeader,24);
-  int p= file.size();
-  qDebug() <<file.size();
-
+  int p=file.size();
   int allpackets=0;
-  while(file.pos()<p)
+  if(fileOut.open(QIODevice::WriteOnly | QIODevice::Text))
+  {
+    QTextStream writeStream(&fileOut);
+    writeStream << ps.fHeader.linktype<<endl;
+    writeStream << ps.fHeader.snaplen<<endl;
+    writeStream << ps.fHeader.sigfigs<<endl;
+    writeStream << ps.fHeader.thiszone<<endl;
+    writeStream << ps.fHeader.version_major<<endl;
+    writeStream << ps.fHeader.version_minor<<endl;
+
+    while(file.pos()<p)
    {
-      qDebug() << file.pos();
-      file.read((char*)&pk.pHeader,16);
-      qDebug() << file.pos();
-      allpackets++;
- //qDebug() << pk.pHeader.len;
-  ui->textBrowser->setText(QString::number(allpackets));
+     allpackets++;
+     file.read((char*)&pk.pHeader,16);
 
-  file.seek(file.pos()-16);
-  file.seek(file.pos()+pk.pHeader.caplen);
+     writeStream << allpackets<<endl;
+     writeStream <<"len bytes"<<pk.pHeader.len<<endl;
+     writeStream << "caplen bytes"<<pk.pHeader.caplen<<endl;
+     file.seek(file.pos()+pk.pHeader.len);
    }
+    QFile File("/home/dribl/d.txt");
+    if((File.exists())&&(File.open(QIODevice::ReadOnly)))
+       {
+       ui->textBrowser->setText(File.readAll());
+       }
   }
+ }
 
-/*qDebug() << ps.fHeader.linktype;
+  qDebug() << ps.fHeader.linktype;
   qDebug() << ps.fHeader.magic;
   qDebug() << ps.fHeader.sigfigs;
   qDebug() << ps.fHeader.snaplen;
   qDebug() << ps.fHeader.thiszone;
   qDebug() << ps.fHeader.version_major;
   qDebug() << ps.fHeader.version_minor;
-*/
+
 }
 
 void Sniffer::on_pushButton_2_clicked()
