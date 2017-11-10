@@ -131,7 +131,6 @@ void Sniffer::on_open_clicked()
   }
 
 
-
 void Sniffer::on_pushButton_2_clicked()
 {
      ui->textEdit->setText("");

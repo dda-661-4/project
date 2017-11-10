@@ -10,6 +10,7 @@ namespace Ui {
 class Sniffer;
 }
 
+
 struct pkt
 {
         qint32 t1;
@@ -53,7 +54,7 @@ class Sniffer : public QMainWindow
 
 public:
     explicit Sniffer(QWidget *parent = 0);
-    ~Sniffer();
+    ~Sniffer();   
 
 private slots:
 
@@ -68,6 +69,7 @@ private slots:
 
 private:
     Ui::Sniffer *ui;
+    int z;
 };
 
 #endif // SNIFFER_H
