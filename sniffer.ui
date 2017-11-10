@@ -76,16 +76,6 @@
      <string>clear</string>
     </property>
    </widget>
-   <widget class="QTextBrowser" name="textBrowser">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>60</y>
-      <width>371</width>
-      <height>251</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QLineEdit" name="min">
     <property name="geometry">
      <rect>
@@ -136,6 +126,16 @@
     </property>
     <property name="frame">
      <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="textEdit">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>60</y>
+      <width>371</width>
+      <height>251</height>
+     </rect>
     </property>
    </widget>
   </widget>

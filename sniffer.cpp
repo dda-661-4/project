@@ -84,7 +84,7 @@ void Sniffer::on_open_clicked()
   int allpackets=0;
   if(fileOut.open(QIODevice::WriteOnly | QIODevice::Text))
   {
-    QTextStream writeStream(&fileOut);
+   /*QTextStream writeStream(&fileOut);
     writeStream <<"linktype\t"<< ps.fHeader.linktype<<endl;
     writeStream <<"max lenth bytes\t"<< ps.fHeader.snaplen<<endl;
     writeStream <<"sigfigs\t"<< ps.fHeader.sigfigs<<endl;
@@ -92,10 +92,22 @@ void Sniffer::on_open_clicked()
     writeStream <<"major\t"<< ps.fHeader.version_major<<endl;
     writeStream <<"minor\t"<< ps.fHeader.version_minor<<endl;
     writeStream <<"magic\t"<< ps.fHeader.magic<<endl;
-    writeStream <<"\n\n\n";
+    writeStream <<"\n\n\n";*/
+
+    ui->textEdit->append("linktype\t" + QString::number(ps.fHeader.linktype));
+    ui->textEdit->append("max lenth bytes\t" + QString::number(ps.fHeader.snaplen)) ;
+    ui->textEdit->append("sigfigs\t" + QString::number(ps.fHeader.sigfigs)) ;
+    ui->textEdit->append("thiszone\t" + QString::number( ps.fHeader.thiszone));
+    ui->textEdit->append("major\t" + QString::number(ps.fHeader.version_major)) ;
+    ui->textEdit->append("minor\t" + QString::number( ps.fHeader.version_minor)) ;
+    ui->textEdit->append("magic\t" + QString::number( ps.fHeader.magic)) ;
+    ui->textEdit->append("\n\n\n") ;
+
 
     int min=65535;
     int max=0;
+
+     //ui->textBrowser->append("packets # ");
 
     while(file.pos()<p)
    {
@@ -105,25 +117,29 @@ void Sniffer::on_open_clicked()
      m_data=new char [pk.pHeader.len];
       //qDebug()<<file.pos();
      file.read(m_data,pk.pHeader.len);
-      //qDebug()<<file.pos();
-     /*ui->textBrowser->append("packets #"+QString::number(allpackets));
-     ui->textBrowser->append("t1\t"+QString::number(pk.pHeader.t1));
-     ui->textBrowser->append("t2\t"+QString::number(pk.pHeader.t2));*/
-     writeStream << "packets # "<<allpackets<<endl;
+
+    ui->textEdit->append("packets # " + QString::number(allpackets));
+     ui->textEdit->append("t2\1" + QString::number(pk.pHeader.t1)) ;
+     ui->textEdit->append("t2\2" + QString::number(pk.pHeader.t2)) ;
+
+    /* writeStream << "packets # "<<allpackets<<endl;
      writeStream << "t1\t"<<pk.pHeader.t1<<endl;
-     writeStream<< "t2\t"<< pk.pHeader.t2<<endl;
+     writeStream<< "t2\t"<< pk.pHeader.t2<<endl;*/
 
      for(int i = 0;i < pk.pHeader.len; i++)
     {
-    // ui->textBrowser->append("DATA\t"+QString::number(m_data[i]&0xff));
-     writeStream <<"DATA\t"<<hex<<(m_data[i]&0xff)<<endl;
+    ui->textEdit->append("DATA\t"+QString::number(m_data[i]&0xff));
+    /*writeStream <<"DATA\t"<<hex<<(m_data[i]&0xff)<<endl;
+     writeStream <<"DATA\t"<<m_data<<endl;*/
     }
-     /*ui->textBrowser->append("packet : bytes\n"+QString::number(pk.pHeader.len));
-     ui->textBrowser->append("packet : bytes\n"+QString::number(pk.pHeader.caplen));
-     ui->textBrowser->append("\n\n");*/
-     writeStream <<"packet : bytes\n"<<pk.pHeader.len<<endl;
+
+     ui->textEdit->append("packet : bytes\n" + QString::number(pk.pHeader.len));
+     ui->textEdit->append("packet : bytes\n" + QString::number(pk.pHeader.caplen)) ;
+     ui->textEdit->append("\n\n");
+
+    /*writeStream <<"packet : bytes\n"<<pk.pHeader.len<<endl;
      writeStream <<"packet : bytes\n"<<pk.pHeader.caplen<<endl;
-     writeStream <<"\n\n";
+     writeStream <<"\n\n";*/
 
     if(pk.pHeader.caplen>max)
      {
@@ -143,11 +159,11 @@ void Sniffer::on_open_clicked()
      ui->min->setText(QString::number(min));
      ui->max->setText(QString::number(max));
 
-   QFile File("/home/dribl/d.txt");
+     /*QFile File("/home/dribl/d.txt");
     if((File.exists())&&(File.open(QIODevice::ReadOnly)))
      {
        ui->textBrowser->setText(File.readAll());
-     }
+     }*/
   }
 
   file.close();
@@ -157,7 +173,7 @@ void Sniffer::on_open_clicked()
 
 void Sniffer::on_pushButton_2_clicked()
 {
-     ui->textBrowser->setText("");
+     ui->textEdit->setText("");
      ui->max->setText("");
      ui->min->setText("");
 }
