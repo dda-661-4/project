@@ -10,6 +10,21 @@
     <height>373</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>395</width>
+    <height>373</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>395</width>
+    <height>373</height>
+   </size>
+  </property>
+  <property name="cursor">
+   <cursorShape>PointingHandCursor</cursorShape>
+  </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>

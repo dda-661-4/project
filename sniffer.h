@@ -23,8 +23,6 @@ class header
 {
 public:
   pkt pHeader;
-
-
   //~header();
 
 };
