@@ -4,12 +4,10 @@
 #include <QMainWindow>
 #include "dribl.h"
 #include <QVector>
-#include <QObject>
 
 namespace Ui {
 class Sniffer;
 }
-
 
 struct pkt
 {
@@ -17,14 +15,13 @@ struct pkt
         qint32 t2;
         qint32 caplen;
         qint32 len;
-        char p_data[10000];
 };
-
 
 class header
 {
 public:
   pkt pHeader;
+  unsigned char A [10000];
   //~header();
 };
 
@@ -45,7 +42,6 @@ public:
     pcapHeader fHeader;
     QVector <header> packets;
 };
-
 
 class Sniffer : public QMainWindow
 {
