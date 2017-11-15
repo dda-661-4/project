@@ -17,14 +17,15 @@ struct pkt
         qint32 t2;
         qint32 caplen;
         qint32 len;
+        char p_data[10000];
 };
+
 
 class header
 {
 public:
   pkt pHeader;
   //~header();
-
 };
 
 struct pcapHeader
