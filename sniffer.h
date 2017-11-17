@@ -21,7 +21,7 @@ class header
 {
 public:
   pkt pHeader;
-  unsigned char A [10000];
+  unsigned char m_data[10000];
   //~header();
 };
 

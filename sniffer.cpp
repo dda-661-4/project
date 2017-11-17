@@ -20,13 +20,12 @@ Sniffer::~Sniffer()
     delete ui;
 }
 
-int buff[2000000];
 QString fName;
 header pk;
 int k;
 int i;
-char *m_data;
 int allpackets;
+int u;
 
 void Sniffer::on_actionExit_triggered()
 {
@@ -35,18 +34,19 @@ void Sniffer::on_actionExit_triggered()
 
 PacketStream ps;
 void Sniffer::on_ok_clicked()
-{    
-    int z;
-    ui->pack->setText("");
-    z=ui->ok->text().toInt();
-    for(int i = 0;i <ps.packets[z].pHeader.caplen; i++)
+{
+   u=ui->number->text().toInt();
+   qDebug()<< u;
+   ui->pack->setText("");
+   for(int i = 0;i < ps.packets[u].pHeader.caplen; i++)
    {
      QString d;
-     d=QString::number(ps.packets[z].A[i]);
+     d=QString::number(ps.packets[u].m_data[i]);
      int q=d.toInt();
      QString s=QString::number(q,16).toUpper();
      ui->pack->insertPlainText(" "+ s);
-    }
+    // qDebug()<<ps.packets[12333].m_data[i];
+   }
 }
 
 void Sniffer::on_open_clicked()
@@ -70,26 +70,22 @@ void Sniffer::on_open_clicked()
   ui->textEdit->append("minor\t" + QString::number( ps.fHeader.version_minor)) ;
   ui->textEdit->append("magic\t" + QString::number( ps.fHeader.magic)) ;
   ui->textEdit->append("\n\n\n") ;
-
     int p=file.size();
     allpackets=0;
     int min=65535;
     int max=0;
-     i=0;
+    i=0;
     while(file.pos()<p)
    {
        allpackets++;
-       buff[allpackets]=file.pos();
        file.read((char*)&pk.pHeader,16);
-      // m_data=new char [pk.pHeader.len];
-       file.read((char*)&pk.A,pk.pHeader.len);
-       ps.packets.append(pk);
+       file.read((char*)&pk.m_data,pk.pHeader.len);
+       ps.packets.append(pk);  
        k=i;
-
       /*for(int k = 0;k<pk.pHeader.len;k++)
        {
         QString d;
-        d=QString::number(pk.A[k]);
+        d=QString::number(pk.m_data[k]);
         int q=d.toInt();
         QString s=QString::number(q,16).toUpper();
         ui->pack->insertPlainText(" "+ s);
