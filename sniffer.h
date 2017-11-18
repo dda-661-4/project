@@ -5,6 +5,13 @@
 #include "dribl.h"
 #include <QVector>
 
+#define num  "№";
+#define time1    "t/1";
+#define time2    "t/2";
+#define len1    "len";
+#define caplen1  "caplen";
+
+
 namespace Ui {
 class Sniffer;
 }
@@ -49,6 +56,7 @@ class Sniffer : public QMainWindow
 
 public:
     explicit Sniffer(QWidget *parent = 0);
+
     ~Sniffer();   
 
 private slots:
@@ -61,6 +69,8 @@ private slots:
     void on_open_clicked();
 
     void on_pushButton_2_clicked();
+
+//    void createUI(const QStringList &headers);
 
 private:
     Ui::Sniffer *ui;

@@ -6,6 +6,7 @@
 #include "mainwindow.h"
 #include "sniffer.h"
 
+
 namespace Ui
 {
 class dribl;
@@ -22,6 +23,7 @@ public:
 private slots:
     void open();
     void openSniff();
+
 
 private:
     Ui::dribl *ui;

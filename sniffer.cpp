@@ -13,6 +13,13 @@ Sniffer::Sniffer(QWidget *parent) :
     ui(new Ui::Sniffer)
 {
     ui->setupUi(this);
+
+    /*this->createUI(QString()<< trUtf8("№")
+                            << trUtf8("t1")
+                            << trUtf8("t2")
+                            << trUtf8("len")
+                            << trUtf8("caplen")
+                   );*/
 }
 
 Sniffer::~Sniffer()
@@ -36,7 +43,6 @@ PacketStream ps;
 void Sniffer::on_ok_clicked()
 {
    u=ui->number->text().toInt();
-   qDebug()<< u;
    ui->pack->setText("");
    for(int i = 0;i < ps.packets[u].pHeader.caplen; i++)
    {
@@ -45,13 +51,15 @@ void Sniffer::on_ok_clicked()
      int q=d.toInt();
      QString s=QString::number(q,16).toUpper();
      ui->pack->insertPlainText(" "+ s);
-    // qDebug()<<ps.packets[12333].m_data[i];
    }
 }
 
 void Sniffer::on_open_clicked()
 {
-  fName = QFileDialog::getOpenFileName(this,"open the file");
+
+   //ui->tableWidget->setRowCount();
+
+  fName = QFileDialog::getOpenFileName(0,"open the file","","(*.cap)");
   QFile file(fName);
 
   if (!file.open(QIODevice::ReadOnly))
@@ -104,17 +112,24 @@ void Sniffer::on_open_clicked()
      ui->textEdit->append("t2\t" + QString::number(pk.pHeader.t2));
      ui->textEdit->append("len\t" + QString::number(pk.pHeader.len));
      ui->textEdit->append("caplen\t" + QString::number(pk.pHeader.caplen));
-      i++;
+     ui->textEdit->append("\n");
+
+     for(int i=0;i<6;i++)
+    {
+     ui->textEdit->append("mac source:"+QString::(pk.m_data[i])QString::+pk.m_data[i+1]+pk.m_data[i+2]+pk.m_data[i+3]+pk.m_data[i+4]+pk.m_data[i+5]);
+    }
+     i++;
    }
      ui->min->setText(QString::number(min));
      ui->max->setText(QString::number(max));
+
   }
  }
 
 void Sniffer::on_pushButton_2_clicked()
 {
      ui->pack->setText("");
-     ui->textEdit->setText("");
+     //ui->textEdit->setText("");
      ui->max->setText("");
      ui->min->setText("");
 }

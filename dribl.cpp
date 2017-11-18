@@ -3,8 +3,10 @@
 #include "mainwindow.h"
 #include "sniffer.h"
 
+
 MainWindow* openWindow;
 Sniffer* openSniffer;
+
 
 dribl::dribl(QWidget *parent) :
     QMainWindow(parent),
