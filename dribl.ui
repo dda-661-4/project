@@ -80,7 +80,6 @@ p, li { white-space: pre-wrap; }
     </property>
     <addaction name="actionCalculator"/>
     <addaction name="actionSniffer"/>
-    <addaction name="actionTable"/>
    </widget>
    <addaction name="menuMenu"/>
   </widget>
@@ -101,11 +100,6 @@ p, li { white-space: pre-wrap; }
   <action name="actionSniffer">
    <property name="text">
     <string>sniffer</string>
-   </property>
-  </action>
-  <action name="actionTable">
-   <property name="text">
-    <string>table</string>
    </property>
   </action>
  </widget>

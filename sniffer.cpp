@@ -11,15 +11,20 @@
 Sniffer::Sniffer(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::Sniffer)
-{
+{ 
     ui->setupUi(this);
 
-    /*this->createUI(QString()<< trUtf8("№")
-                            << trUtf8("t1")
-                            << trUtf8("t2")
-                            << trUtf8("len")
-                            << trUtf8("caplen")
-                   );*/
+    ui->tableWidget->setColumnCount(8);
+    ui->tableWidget->setRowCount(100000);
+    ui->tableWidget->setShowGrid(true);
+    ui->tableWidget->setHorizontalHeaderItem(0,new QTableWidgetItem(tr("mac source")));
+    ui->tableWidget->setHorizontalHeaderItem(1,new QTableWidgetItem(tr("mac destination")));
+    ui->tableWidget->setHorizontalHeaderItem(2,new QTableWidgetItem(tr("type")));
+    ui->tableWidget->setHorizontalHeaderItem(3,new QTableWidgetItem(tr("PROTOCOL")));
+    ui->tableWidget->setHorizontalHeaderItem(4,new QTableWidgetItem(tr("IP source")));
+    ui->tableWidget->setHorizontalHeaderItem(5,new QTableWidgetItem(tr("IP destination")));
+    ui->tableWidget->setHorizontalHeaderItem(6,new QTableWidgetItem(tr("ports source")));
+    ui->tableWidget->setHorizontalHeaderItem(7,new QTableWidgetItem(tr("ports destination")));
 }
 
 Sniffer::~Sniffer()
@@ -27,12 +32,17 @@ Sniffer::~Sniffer()
     delete ui;
 }
 
-QString fName;
+QString fName,m;
 header pk;
 int k;
 int i;
 int allpackets;
 int u;
+QString p1,p2,p3,q1,q2,q3,S="0";
+QString s1,s2,M;
+unsigned char *ptr;
+QTableWidgetItem *item;
+
 
 void Sniffer::on_actionExit_triggered()
 {
@@ -56,9 +66,6 @@ void Sniffer::on_ok_clicked()
 
 void Sniffer::on_open_clicked()
 {
-
-   //ui->tableWidget->setRowCount();
-
   fName = QFileDialog::getOpenFileName(0,"open the file","","(*.cap)");
   QFile file(fName);
 
@@ -70,24 +77,27 @@ void Sniffer::on_open_clicked()
   {
   file.read((char *)&ps.fHeader,24);
 
-  ui->textEdit->append("linktype\t" + QString::number(ps.fHeader.linktype));
+ /* ui->textEdit->insertPlainText("linktype\t" + QString::number(ps.fHeader.linktype));
   ui->textEdit->append("max lenth bytes\t" + QString::number(ps.fHeader.snaplen)) ;
   ui->textEdit->append("sigfigs\t" + QString::number(ps.fHeader.sigfigs)) ;
   ui->textEdit->append("thiszone\t" + QString::number( ps.fHeader.thiszone));
   ui->textEdit->append("major\t" + QString::number(ps.fHeader.version_major)) ;
   ui->textEdit->append("minor\t" + QString::number( ps.fHeader.version_minor)) ;
   ui->textEdit->append("magic\t" + QString::number( ps.fHeader.magic)) ;
-  ui->textEdit->append("\n\n\n") ;
+  ui->textEdit->append("\n\n\n") ;*/
     int p=file.size();
     allpackets=0;
     int min=65535;
     int max=0;
     i=0;
+
     while(file.pos()<p)
    {
        allpackets++;
        file.read((char*)&pk.pHeader,16);
-       file.read((char*)&pk.m_data,pk.pHeader.len);
+       pk.m_data= new unsigned char[pk.pHeader.caplen];
+       ptr=pk.m_data;
+       file.read((char*)pk.m_data,pk.pHeader.len);
        ps.packets.append(pk);  
        k=i;
       /*for(int k = 0;k<pk.pHeader.len;k++)
@@ -98,6 +108,7 @@ void Sniffer::on_open_clicked()
         QString s=QString::number(q,16).toUpper();
         ui->pack->insertPlainText(" "+ s);
        }*/
+       //qDebug()<<i;
 
     if(pk.pHeader.caplen>max)
      {
@@ -107,23 +118,139 @@ void Sniffer::on_open_clicked()
      {
        min=pk.pHeader.caplen;
      }
-     ui->textEdit->append("packets #" + QString::number(i));
+    /* ui->textEdit->append("packets #" + QString::number(i));
      ui->textEdit->append("t1\t" + QString::number(pk.pHeader.t1));
      ui->textEdit->append("t2\t" + QString::number(pk.pHeader.t2));
      ui->textEdit->append("len\t" + QString::number(pk.pHeader.len));
      ui->textEdit->append("caplen\t" + QString::number(pk.pHeader.caplen));
-     ui->textEdit->append("\n");
+*/
 
-     for(int i=0;i<6;i++)
+     //ui->textEdit->append("mac source-");
+     item= new QTableWidgetItem;
+     item->setText(QString::number(pk.m_data[0],16)+" " +QString::number(pk.m_data[1],16)+" "+QString::number(pk.m_data[2],16)+" "+QString::number(pk.m_data[3],16)+" "+QString::number(pk.m_data[4],16)+" "+" "+QString::number(pk.m_data[5],16));
+     ui->tableWidget->setItem(k,0,item);
+
+   /* for(int k=0;k<6;k++) //0 1 2 3 4 5
+     {
+       m=QString::number(pk.m_data[k]);
+       int m1=m.toInt();
+       if(m1<16)
+       {
+        //ui->textEdit->insertPlainText("0"+QString::number(pk.m_data[k],16)+" ");
+          ;
+
+       }
+       else
+       {
+
+       //ui->textEdit->insertPlainText(QString::number(pk.m_data[k],16)+" ");
+       }
+     }
+*/
+
+     //ui->textEdit->append("mac destination-");
+
+     item= new QTableWidgetItem;
+     item->setText(QString::number(pk.m_data[6],16)+" " +QString::number(pk.m_data[7],16)+" "+QString::number(pk.m_data[8],16)+" "+QString::number(pk.m_data[9],16)+" "+QString::number(pk.m_data[10],16)+" "+" "+QString::number(pk.m_data[11],16));
+     ui->tableWidget->setItem(k,1,item);
+   /*
+     for(int k=6;k<12;k++) // 6 7 8 9 10 11
+     {
+      m=QString::number(pk.m_data[k]);
+      int m1=m.toInt();
+      if(m1<16)
+      {
+      ui->textEdit->insertPlainText("0"+QString::number(pk.m_data[k],16)+" ");
+      }
+      else
+      {
+      ui->textEdit->insertPlainText(QString::number(pk.m_data[k],16)+" ");
+      }
+     }*/
+     // TYPE-----------------------------------------------------------------------------------
+     //ui->textEdit->append("type-");
+
+     s1=QString::number(pk.m_data[12]);
+    // ui->textEdit->insertPlainText(s1);
+
+     s2=QString::number(pk.m_data[13]);
+   //  ui->textEdit->insertPlainText(s2);
+
+     M=s1+s2;
+
+    item= new QTableWidgetItem;
+    item->setText(M);
+    ui->tableWidget->setItem(k,2,item);
+
+     z1=M.toInt();
+
+     //IP PROTOCOLS--------------------------------------------------------------------------------------
+
+     protocol_process( ptr,z1);
+
+  //flag_ip=is_ip(z1);
+
+   /*if(flag_ip==true)
     {
-     ui->textEdit->append("mac source:"+QString::(pk.m_data[i])QString::+pk.m_data[i+1]+pk.m_data[i+2]+pk.m_data[i+3]+pk.m_data[i+4]+pk.m_data[i+5]);
-    }
+     ui->textEdit->append("ip address source:");// 14 15 16 17 18 19 20 21 22 23 24 25| 26 27 28 29 30 31 32 33 |34 35
+
+     for(int i=26;i<30;i++)
+     {
+        ui->textEdit->insertPlainText(QString::number(pk.m_data[i],10)+ " ");
+     }
+
+     ui->textEdit->append("ip address destination:");
+
+     for(int i=30;i<34;i++)
+     {
+         ui->textEdit->insertPlainText(QString::number(pk.m_data[i],10)+ " ");
+     }
+
+// PORTS================================================== -----------------------------------------------------------------------------------------------------------------
+     ui->textEdit->append("ports source-");
+     QString m1,m2;
+     m1=QString::number(pk.m_data[34]);
+     int i1=m1.toInt();
+
+     QString f1=QString::number(i1,16).toUpper();
+
+     m2=QString::number(pk.m_data[35]);
+     int i2=m2.toInt();
+     QString f2=QString::number(i2,16).toUpper();
+     m=f1+f2;
+     m=QString::number(m.toInt(0,16),10);
+
+     ui->textEdit->insertPlainText(m);
+//---------------------------------------------------------------------------------------------------------------------------
+    ui->textEdit->append("ports destination-");
+
+    m1=QString::number(pk.m_data[36]);
+    i1=m1.toInt();
+
+    f1=QString::number(i1,16).toUpper();
+
+    m2=QString::number(pk.m_data[35]);
+    i2=m2.toInt();
+     f2=QString::number(i2,16).toUpper();
+    m=f1+f2;
+
+    m=QString::number(m.toInt(0,16),10);
+
+    ui->textEdit->insertPlainText(m);
+*/
      i++;
+   /*}
+   else
+    {
+       ui->textEdit->append("NOT IP");
+    }*/     
    }
+    //--------------------------------------------
+    ui->tableWidget->setRowCount(k);
      ui->min->setText(QString::number(min));
      ui->max->setText(QString::number(max));
-
   }
+  delete []pk.m_data;
  }
 
 void Sniffer::on_pushButton_2_clicked()
@@ -132,4 +259,107 @@ void Sniffer::on_pushButton_2_clicked()
      //ui->textEdit->setText("");
      ui->max->setText("");
      ui->min->setText("");
+}
+
+bool Sniffer::is_ip(int z1)
+{
+    if(z1==80)
+   {
+        item= new QTableWidgetItem;
+        item->setText("IP");
+        ui->tableWidget->setItem(k,3,item);
+    return true;
+   }
+    else
+   {
+        item= new QTableWidgetItem;
+        item->setText("-");
+        ui->tableWidget->setItem(k,3,item);
+    return false;
+   }
+}
+
+void Sniffer::protocol_process(unsigned char ptr[],int z1)
+{
+    flag_ip=is_ip(z1);
+    switch(flag_ip)
+ {
+  case true :    protocol_ip(ptr);
+        break;
+  case false :  unknown_protocol(ptr,z1);
+         break;
+ }
+}
+
+void Sniffer::protocol_ip(unsigned char ptr[])
+ {
+
+    // ui->textEdit->append("ip address source:");// 14 15 16 17 18 19 20 21 22 23 24 25| 26 27 28 29 30 31 32 33 |34 35
+
+    item= new QTableWidgetItem;
+    item->setText(QString::number(pk.m_data[26],10)+" " +QString::number(pk.m_data[27],10)+" "+QString::number(pk.m_data[28],10)+" "+QString::number(pk.m_data[29],10));
+    ui->tableWidget->setItem(k,4,item);
+
+
+     for(int i=26;i<30;i++)
+     {
+     //   ui->textEdit->insertPlainText(QString::number(ptr[i],10)+ " ");
+     }
+//
+     //ui->textEdit->append("ip address destination:");
+
+     item= new QTableWidgetItem;
+     item->setText(QString::number(pk.m_data[30],10)+" " +QString::number(pk.m_data[31],10)+" "+QString::number(pk.m_data[32],10)+" "+QString::number(pk.m_data[33],10));
+     ui->tableWidget->setItem(k,5,item);
+
+
+     for(int i=30;i<34;i++)
+     {
+       //  ui->textEdit->insertPlainText(QString::number(ptr[i],10)+ " ");
+     }
+
+// PORTS================================================== -----------------------------------------------------------------------------------------------------------------
+     //ui->textEdit->append("ports source-");
+     QString m1,m2;
+     m1=QString::number(pk.m_data[34]);
+     int i1=m1.toInt();
+
+     QString f1=QString::number(i1,16).toUpper();
+
+     m2=QString::number(pk.m_data[35]);
+     int i2=m2.toInt();
+     QString f2=QString::number(i2,16).toUpper();
+     m=f1+f2;
+     m=QString::number(m.toInt(0,16),10);
+
+     item= new QTableWidgetItem;
+     item->setText(m);
+     ui->tableWidget->setItem(k,6,item);
+
+   //  ui->textEdit->insertPlainText(m);
+//---------------------------------------------------------------------------------------------------------------------------
+   // ui->textEdit->append("ports destination-");
+
+    m1=QString::number(pk.m_data[36]);
+    i1=m1.toInt();
+
+    f1=QString::number(i1,16).toUpper();
+
+    m2=QString::number(pk.m_data[35]);
+    i2=m2.toInt();
+     f2=QString::number(i2,16).toUpper();
+    m=f1+f2;
+
+    m=QString::number(m.toInt(0,16),10);
+
+    item= new QTableWidgetItem;
+    item->setText(m);
+    ui->tableWidget->setItem(k,7,item);
+   // ui->textEdit->insertPlainText(m);
+ }
+
+void Sniffer::unknown_protocol(unsigned char ptr[],int z1)
+{
+
+  // ui->textEdit->append("NOT IP");
 }

@@ -5,13 +5,6 @@
 #include "dribl.h"
 #include <QVector>
 
-#define num  "№";
-#define time1    "t/1";
-#define time2    "t/2";
-#define len1    "len";
-#define caplen1  "caplen";
-
-
 namespace Ui {
 class Sniffer;
 }
@@ -28,8 +21,11 @@ class header
 {
 public:
   pkt pHeader;
-  unsigned char m_data[10000];
+  unsigned char *m_data;
+
   //~header();
+ private slots:
+
 };
 
 struct pcapHeader
@@ -56,11 +52,11 @@ class Sniffer : public QMainWindow
 
 public:
     explicit Sniffer(QWidget *parent = 0);
-
+    int z1;
+    bool flag_ip;
     ~Sniffer();   
 
 private slots:
-
 
     void on_actionExit_triggered();
 
@@ -70,11 +66,18 @@ private slots:
 
     void on_pushButton_2_clicked();
 
-//    void createUI(const QStringList &headers);
+    bool is_ip(int z1);
+
+    void protocol_process(unsigned char ptr[],int z1);
+
+    void protocol_ip(unsigned char ptr[]);
+
+    void unknown_protocol(unsigned char ptr[],int z1);
+
 
 private:
     Ui::Sniffer *ui;
-    int z;
+
 };
 
 #endif // SNIFFER_H
