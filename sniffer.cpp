@@ -15,10 +15,13 @@ Sniffer::Sniffer(QWidget *parent) :
     ui->setupUi(this);
 
     ui->tableWidget->setColumnCount(8);
+      ui->data_table->setColumnCount(10000);
     ui->tableWidget->setRowCount(100000);
+      ui->data_table->setRowCount(10000);
     ui->tableWidget->setShowGrid(true);
-    ui->tableWidget->setHorizontalHeaderItem(0,new QTableWidgetItem(tr("mac source")));
-    ui->tableWidget->setHorizontalHeaderItem(1,new QTableWidgetItem(tr("mac destination")));
+      ui->data_table->setShowGrid(true);
+    ui->tableWidget->setHorizontalHeaderItem(0,new QTableWidgetItem(tr("mac destination")));
+    ui->tableWidget->setHorizontalHeaderItem(1,new QTableWidgetItem(tr("mac source")));
     ui->tableWidget->setHorizontalHeaderItem(2,new QTableWidgetItem(tr("type")));
     ui->tableWidget->setHorizontalHeaderItem(3,new QTableWidgetItem(tr("PROTOCOL")));
     ui->tableWidget->setHorizontalHeaderItem(4,new QTableWidgetItem(tr("IP source")));
@@ -90,12 +93,14 @@ void Sniffer::on_open_clicked()
     int min=65535;
     int max=0;
     i=0;
+    int len_poc;
 
     while(file.pos()<p)
    {
        allpackets++;
        file.read((char*)&pk.pHeader,16);
        pk.m_data= new unsigned char[pk.pHeader.caplen];
+       len_poc=pk.pHeader.caplen;
        ptr=pk.m_data;
        file.read((char*)pk.m_data,pk.pHeader.len);
        ps.packets.append(pk);  
@@ -110,6 +115,8 @@ void Sniffer::on_open_clicked()
        }*/
        //qDebug()<<i;
 
+       print_data(ptr,k,len_poc);
+
     if(pk.pHeader.caplen>max)
      {
        max=pk.pHeader.caplen;
@@ -118,63 +125,19 @@ void Sniffer::on_open_clicked()
      {
        min=pk.pHeader.caplen;
      }
-    /* ui->textEdit->append("packets #" + QString::number(i));
-     ui->textEdit->append("t1\t" + QString::number(pk.pHeader.t1));
-     ui->textEdit->append("t2\t" + QString::number(pk.pHeader.t2));
-     ui->textEdit->append("len\t" + QString::number(pk.pHeader.len));
-     ui->textEdit->append("caplen\t" + QString::number(pk.pHeader.caplen));
-*/
 
-     //ui->textEdit->append("mac source-");
      item= new QTableWidgetItem;
      item->setText(QString::number(pk.m_data[0],16)+" " +QString::number(pk.m_data[1],16)+" "+QString::number(pk.m_data[2],16)+" "+QString::number(pk.m_data[3],16)+" "+QString::number(pk.m_data[4],16)+" "+" "+QString::number(pk.m_data[5],16));
      ui->tableWidget->setItem(k,0,item);
 
-   /* for(int k=0;k<6;k++) //0 1 2 3 4 5
-     {
-       m=QString::number(pk.m_data[k]);
-       int m1=m.toInt();
-       if(m1<16)
-       {
-        //ui->textEdit->insertPlainText("0"+QString::number(pk.m_data[k],16)+" ");
-          ;
-
-       }
-       else
-       {
-
-       //ui->textEdit->insertPlainText(QString::number(pk.m_data[k],16)+" ");
-       }
-     }
-*/
-
-     //ui->textEdit->append("mac destination-");
 
      item= new QTableWidgetItem;
      item->setText(QString::number(pk.m_data[6],16)+" " +QString::number(pk.m_data[7],16)+" "+QString::number(pk.m_data[8],16)+" "+QString::number(pk.m_data[9],16)+" "+QString::number(pk.m_data[10],16)+" "+" "+QString::number(pk.m_data[11],16));
      ui->tableWidget->setItem(k,1,item);
-   /*
-     for(int k=6;k<12;k++) // 6 7 8 9 10 11
-     {
-      m=QString::number(pk.m_data[k]);
-      int m1=m.toInt();
-      if(m1<16)
-      {
-      ui->textEdit->insertPlainText("0"+QString::number(pk.m_data[k],16)+" ");
-      }
-      else
-      {
-      ui->textEdit->insertPlainText(QString::number(pk.m_data[k],16)+" ");
-      }
-     }*/
-     // TYPE-----------------------------------------------------------------------------------
-     //ui->textEdit->append("type-");
 
      s1=QString::number(pk.m_data[12]);
-    // ui->textEdit->insertPlainText(s1);
 
      s2=QString::number(pk.m_data[13]);
-   //  ui->textEdit->insertPlainText(s2);
 
      M=s1+s2;
 
@@ -188,64 +151,10 @@ void Sniffer::on_open_clicked()
 
      protocol_process( ptr,z1);
 
-  //flag_ip=is_ip(z1);
-
-   /*if(flag_ip==true)
-    {
-     ui->textEdit->append("ip address source:");// 14 15 16 17 18 19 20 21 22 23 24 25| 26 27 28 29 30 31 32 33 |34 35
-
-     for(int i=26;i<30;i++)
-     {
-        ui->textEdit->insertPlainText(QString::number(pk.m_data[i],10)+ " ");
-     }
-
-     ui->textEdit->append("ip address destination:");
-
-     for(int i=30;i<34;i++)
-     {
-         ui->textEdit->insertPlainText(QString::number(pk.m_data[i],10)+ " ");
-     }
-
-// PORTS================================================== -----------------------------------------------------------------------------------------------------------------
-     ui->textEdit->append("ports source-");
-     QString m1,m2;
-     m1=QString::number(pk.m_data[34]);
-     int i1=m1.toInt();
-
-     QString f1=QString::number(i1,16).toUpper();
-
-     m2=QString::number(pk.m_data[35]);
-     int i2=m2.toInt();
-     QString f2=QString::number(i2,16).toUpper();
-     m=f1+f2;
-     m=QString::number(m.toInt(0,16),10);
-
-     ui->textEdit->insertPlainText(m);
-//---------------------------------------------------------------------------------------------------------------------------
-    ui->textEdit->append("ports destination-");
-
-    m1=QString::number(pk.m_data[36]);
-    i1=m1.toInt();
-
-    f1=QString::number(i1,16).toUpper();
-
-    m2=QString::number(pk.m_data[35]);
-    i2=m2.toInt();
-     f2=QString::number(i2,16).toUpper();
-    m=f1+f2;
-
-    m=QString::number(m.toInt(0,16),10);
-
-    ui->textEdit->insertPlainText(m);
-*/
      i++;
-   /*}
-   else
-    {
-       ui->textEdit->append("NOT IP");
-    }*/     
    }
     //--------------------------------------------
+    ui->data_table->setRowCount(k);
     ui->tableWidget->setRowCount(k);
      ui->min->setText(QString::number(min));
      ui->max->setText(QString::number(max));
@@ -363,3 +272,17 @@ void Sniffer::unknown_protocol(unsigned char ptr[],int z1)
 
   // ui->textEdit->append("NOT IP");
 }
+
+void Sniffer::print_data(unsigned char ptr[],int k,int len_poc)
+{
+  for(int j=0;j<k;j++)
+   for(int i=0;i<len_poc;i++)
+   {
+    item= new QTableWidgetItem;
+    item->setText(QString::number(ptr[i],16));
+    ui->data_table->setItem(j,i,item);
+   }
+  //ui->data_table->setColumnCount(len_poc);
+}
+
+

@@ -74,6 +74,8 @@ private slots:
 
     void unknown_protocol(unsigned char ptr[],int z1);
 
+    void print_data(unsigned char ptr[],int k,int len_poc);
+
 
 private:
     Ui::Sniffer *ui;
